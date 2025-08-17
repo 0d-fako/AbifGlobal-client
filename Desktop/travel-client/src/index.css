@@ -1,0 +1,21 @@
+@import 'tailwindcss';
+@tailwind utilities;
+
+@theme {
+  --breakpoint-*: initial;
+  --breakpoint-md: 901px;
+  --background-image-about-hero: url(./components/images/slider4.webp);
+  --background-image-contact-hero: url(./components/images/slider4.webp);
+  --shadow-box-drop: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+
+:root {
+  width: 100%;
+}
+
+body {
+  margin: 0 auto;
+  overflow-x: hidden;
+  cursor: pointer;
+}
+
