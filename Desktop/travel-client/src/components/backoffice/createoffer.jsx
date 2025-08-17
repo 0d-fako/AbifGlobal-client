@@ -21,53 +21,49 @@ function Createoffer() {
     const navigate = useNavigate();
     const token = Cookies.get('authToken');
     const [error, setError] = useState('');
-    const [image, setImage] = useState([]);
+    const [image, setImage] = useState(null); 
 
     const handleFileChange = (e) => {
         const file = e.target.files[0]; 
         if (!file){
             setError('Choose an image!');
+            return; 
         }; 
       
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          setImage([reader.result]);
-        };
-        reader.readAsDataURL(file);
-      };
+        
+        setImage(file);
+        setError(''); 
+    };
       
-      const saveImage = async () => {
+    const saveImage = async () => {
         setError('Loading...');
-        if (image.length === 0) {
-          alert("Please select an image first!");
-          return;
+        if (!image) {
+            alert("Please select an image first!");
+            return;
         }
         
         const formData = new FormData();
-        formData.append('file', image[0]);
+        formData.append('file', image); 
         formData.append('upload_preset', 'abifglobal');
       
         try {
-          const response = await axios.post(
-            'https://api.cloudinary.com/v1_1/dqqpnfocv/image/upload',
-            formData
-          );
+            const response = await axios.post(
+                'https://api.cloudinary.com/v1_1/dqqpnfocv/image/upload',
+                formData
+            );
       
-          const url = response.data.secure_url;
+            const url = response.data.secure_url;
       
-          setOffer((prev) => ({ ...prev, imgurl: url }));
-          setTimeout(() => {
-            setError('Image uploaded successfully!');
-          }, 1000);
+            setOffer((prev) => ({ ...prev, imgurl: url }));
+            setError('Image uploaded successfully!'); 
       
-        } catch {
-          setTimeout(() => {
-            setError('Failed to upload the image. Please try again.');
-          }, 1000);
+        } catch (error) { 
+            console.error('Upload error:', error);
+            setError('Failed to upload the image. Please try again.'); 
         }
-      };
+    };
 
-      const handleDiscount = (e) =>{
+    const handleDiscount = (e) =>{
         const disc = e.target.value;
         if(disc === 0){
             setOffer((prev)=>({...prev, newprice : 0}));
@@ -80,7 +76,7 @@ function Createoffer() {
         }
         setOffer((prev)=>({...prev, [e.target.name]: disc}));
 
-      }
+    }
 
 
     const sendOffer = async ()=>{
@@ -115,8 +111,8 @@ function Createoffer() {
                         <div className="md:w-[48%] w-full p-3 box-border border-2 border-dashed border-red-600 flex flex-col items-center justify-center">
                             <div className="text-center p-6 relative box-border">
                                 <FontAwesomeIcon icon="fa-solid fa-upload" className="text-red-600" />
-                                <h3 className="text-sm mt-2 text-gray-500">{image.length > 0 ? 'image' : 'Photo'}</h3>
-                                <input className="block h-full w-full absolute top-0 bottom-0 z-10 left-0 right-0 opacity-0" type="file" onChange={handleFileChange} />
+                                <h3 className="text-sm mt-2 text-gray-500">{image ? 'Image Selected' : 'Photo'}</h3> {/* CHANGED: from image.length > 0 to image */}
+                                <input className="block h-full w-full absolute top-0 bottom-0 z-10 left-0 right-0 opacity-0" type="file" accept="image/*" onChange={handleFileChange} /> {/* ADDED: accept="image/*" */}
                             </div>
                             <div className="bg-red-600 text-white px-4 py-1">
                                 <button onClick={saveImage}>Save Image</button>
